@@ -2,6 +2,8 @@ package org.labs;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        Config config = Config.fromArgs(args);
+        System.out.printf("Programmers: %d, portions: %d, waiters: %d%n",
+                config.programmers(), config.portions(), config.waiters());
     }
 }
