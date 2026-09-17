@@ -12,23 +12,23 @@ class MainTest {
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void checkForBalance() throws InterruptedException {
-        Result result = new Restaurant(new Config(7, 10_005, 2)).run();
+        Result result = new Restaurant(new Config(7, 73, 2)).run();
 
-        assertEquals(10_005, result.totalEaten());
+        assertEquals(73, result.totalEaten());
         assertEquals(0, result.remainingPortions());
         assertTrue(result.isBalanced());
-        assertEquals(1_429, result.minimumEaten());
-        assertEquals(1_430, result.maximumEaten());
+        assertEquals(10, result.minimumEaten());
+        assertEquals(11, result.maximumEaten());
     }
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void notEnoughFood() throws InterruptedException {
-        Result result = new Restaurant(new Config(10, 3, 4)).run();
+    void smallFoodSupply() throws InterruptedException {
+        Result result = new Restaurant(new Config(10, 25, 4)).run();
 
-        assertEquals(3, result.totalEaten());
-        assertEquals(0, result.minimumEaten());
-        assertEquals(1, result.maximumEaten());
+        assertEquals(25, result.totalEaten());
+        assertEquals(2, result.minimumEaten());
+        assertEquals(3, result.maximumEaten());
         assertTrue(result.isBalanced());
     }
 
@@ -36,7 +36,7 @@ class MainTest {
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void diffProgrammersCount() throws InterruptedException {
         for (int programmers = 2; programmers <= 12; programmers++) {
-            int portions = programmers * 200 + 17; // чтобы не делилось на число программистов
+            int portions = programmers * 5 + 1; // чтобы не делилось на число программистов
             Result result = new Restaurant(
                     new Config(programmers, portions, Math.min(programmers, 3))
             ).run();

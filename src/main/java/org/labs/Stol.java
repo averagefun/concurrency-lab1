@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 final class Stol {
+    private static final long EATING_TIME_MILLIS = 30;
+
     private final List<Spoon> spoons;
     private final Semaphore seats;
 
@@ -28,6 +30,7 @@ final class Stol {
             leftTaken = true;
             right.take();
             rightTaken = true;
+            Thread.sleep(EATING_TIME_MILLIS);
         } finally {
             if (rightTaken) {
                 right.putBack();
