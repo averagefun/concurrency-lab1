@@ -1,6 +1,7 @@
 package org.labs;
 
 public class Main {
+
     // ./gradlew run --args="<programmers> <portions> <waiters>", ex 7 1000000 3
     public static void main(String[] args) throws InterruptedException {
         Config config = Config.fromArgs(args);
