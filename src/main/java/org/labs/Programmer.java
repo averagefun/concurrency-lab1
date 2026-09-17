@@ -1,30 +1,35 @@
 package org.labs;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 final class Programmer implements Callable<Integer> {
     private final int place;
-    private final int target;
     private final Stol stol;
     private final WaiterPool waiters;
 
-    Programmer(int place, int target, Stol stol, WaiterPool waiters) {
+    Programmer(int place, Stol stol, WaiterPool waiters) {
         this.place = place;
-        this.target = target;
         this.stol = stol;
         this.waiters = waiters;
     }
 
     @Override
     public Integer call() throws InterruptedException {
-        int eaten = 0;
-        while (eaten < target) {
-            if (!waiters.bringPortion()) {
-                throw new IllegalStateException("the sklad is empty:(");
-            }
+        int portions = 0;
+        while (getDelivery(waiters.bringPortion(place))) {
             stol.eat(place);
-            eaten++;
+            portions++;
         }
-        return eaten;
+        return portions;
+    }
+
+    private boolean getDelivery(Future<Boolean> delivery) throws InterruptedException {
+        try {
+            return delivery.get();
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("deliver error", e.getCause());
+        }
     }
 }

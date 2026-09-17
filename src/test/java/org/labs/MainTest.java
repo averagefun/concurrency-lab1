@@ -6,19 +6,15 @@ import org.junit.jupiter.api.Timeout;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MainTest {
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void checkForBalance() throws InterruptedException {
+    void consumesAllPortions() throws InterruptedException {
         Result result = new Restaurant(new Config(7, 73, 2)).run();
 
         assertEquals(73, result.totalEaten());
         assertEquals(0, result.remainingPortions());
-        assertTrue(result.isBalanced());
-        assertEquals(10, result.minimumEaten());
-        assertEquals(11, result.maximumEaten());
     }
 
     @Test
@@ -27,14 +23,12 @@ class MainTest {
         Result result = new Restaurant(new Config(10, 25, 4)).run();
 
         assertEquals(25, result.totalEaten());
-        assertEquals(2, result.minimumEaten());
-        assertEquals(3, result.maximumEaten());
-        assertTrue(result.isBalanced());
+        assertEquals(0, result.remainingPortions());
     }
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    void diffProgrammersCount() throws InterruptedException {
+    void differentProgrammersCount() throws InterruptedException {
         for (int programmers = 2; programmers <= 12; programmers++) {
             int portions = programmers * 5 + 1; // чтобы не делилось на число программистов
             Result result = new Restaurant(
@@ -43,7 +37,24 @@ class MainTest {
 
             assertEquals(portions, result.totalEaten());
             assertEquals(0, result.remainingPortions());
-            assertTrue(result.isBalanced());
         }
+    }
+
+    @Test
+    @Timeout(value = 2, unit = TimeUnit.SECONDS)
+    void emptySklad() throws InterruptedException {
+        Result result = new Restaurant(new Config(7, 0, 2)).run();
+
+        assertEquals(0, result.totalEaten());
+        assertEquals(0, result.remainingPortions());
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void singleWaiter() throws InterruptedException {
+        Result result = new Restaurant(new Config(5, 17, 1)).run();
+
+        assertEquals(17, result.totalEaten());
+        assertEquals(0, result.remainingPortions());
     }
 }

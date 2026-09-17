@@ -17,8 +17,8 @@ public final class Restaurant {
 
     public Result run() throws InterruptedException {
         Sklad sklad = new Sklad(config.portions());
-        WaiterPool waiters = new WaiterPool(config.waiters(), sklad);
-        Stol table = new Stol(config.programmers());
+        WaiterPool waiters = new WaiterPool(config.waiters(), config.programmers(), sklad);
+        Stol stol = new Stol(config.programmers());
         AtomicInteger threadNumber = new AtomicInteger(1);
         ExecutorService executor = Executors.newFixedThreadPool(
                 config.programmers(),
@@ -28,11 +28,7 @@ public final class Restaurant {
         try {
             List<Future<Integer>> futures = new ArrayList<>(config.programmers());
             for (int i = 0; i < config.programmers(); i++) {
-                int target = config.portions() / config.programmers();
-                if (i < config.portions() % config.programmers()) {
-                    target++;
-                }
-                futures.add(executor.submit(new Programmer(i, target, table, waiters)));
+                futures.add(executor.submit(new Programmer(i, stol, waiters)));
             }
 
             List<Integer> portions = new ArrayList<>(config.programmers());
@@ -42,6 +38,7 @@ public final class Restaurant {
             return new Result(portions, sklad.remaining());
         } finally {
             executor.shutdownNow();
+            waiters.close();
         }
     }
 
